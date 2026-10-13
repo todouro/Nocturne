@@ -4,11 +4,11 @@ A small, moonlit piano for the moments in between. NOCTURNE is a responsive, bro
 
 ## Run it
 
-There is no build step, package manager, external font, runtime dependency, or sample download.
+There is no build step or package manager. The instrument uses native Web Audio and loads recorded Salamander Grand Piano samples from the Tone.js sample host; the browser can cache them after the first play.
 
 - Open `index.html` in a modern browser, or serve this directory with any static HTTP server.
 - For public hosting, enable **GitHub Pages** for the repository's `main` branch and `/(root)`.
-- Click **Wake the piano** or press any mapped note once to initialize browser audio. Browsers do not permit audio to start automatically before a user gesture.
+- Click **Wake the piano** or press any mapped note once to initialize browser audio. Recorded piano samples begin loading after that interaction; the keyboard remains playable while the sample range loads.
 
 ## Play
 
@@ -21,19 +21,19 @@ The two rows of computer keys play two octaves. Hold notes to sustain their atta
 - `[` / `]` shifts the full keyboard down/up an octave. The on-screen −/+ controls do the same.
 - **Sustain** keeps released notes ringing until the pedal is switched off.
 - **Master volume** changes the output level.
-- **Room** changes the amount of a short, softly fed-back delay.
+- **Room** changes the level of a soft convolution-style room reverb.
 - Mouse, touch, and accessible keyboard activation of an individual piano key are supported.
 
 Preferences for octave, volume, and room amount are stored locally when browser storage is available.
 
 ## Audio and visuals
 
-The instrument uses one shared Web Audio engine with five harmonics per note, a quiet filtered hammer transient, a shaped decay/release envelope, a master compressor, and a modest room send. The sound is synthesized in-browser rather than downloaded from a sample library, so it remains self-contained and may not have the timbral detail of a recorded grand piano.
+The primary instrument uses recorded notes from the Salamander Grand Piano sample set by Alexander Holm, hosted by Tone.js. The closest recorded pitch is gently resampled to cover missing semitones across the keyboard, with polyphonic voices, note-release envelopes, a master compressor, and a generated convolution-style room impulse. If sample loading fails or the site is used offline, the previous lightweight oscillator instrument remains available as a fallback.
 
 Resonance uses the played pitches and currently held notes to place expanding waves, fine particles, and a subtle chord-responsive ribbon. It does not run a decorative animation loop while idle. Reduced-motion preferences shorten and calm the visual response.
 
 ## Browser notes
 
-A current Chromium, Firefox, or Safari browser with Web Audio support is recommended. Audio is initialized only after a user action. The page has no tracking, API keys, remote assets, or external network requirements.
+A current Chromium, Firefox, or Safari browser with Web Audio support is recommended. Audio is initialized only after a user action. Piano sample loading requires an internet connection to the Tone.js sample host; decoded samples are reused during the session and may be cached by the browser. No tracking or API keys are used.
 
-The project began as an empty repository, so there was no pre-existing build, lint, test, or CI configuration to preserve.
+## Piano sample attribution\n\nThe Salamander Grand Piano recordings were created by Alexander Holm and are licensed under **Creative Commons Attribution 3.0 (CC BY 3.0)**. The sample set is hosted at [Tone.js Salamander](https://tonejs.github.io/audio/salamander/) and its [original archive](https://archive.org/details/SalamanderGrandPianoV3).\n\nThe project began as an empty repository, so there was no pre-existing build, lint, test, or CI configuration to preserve.

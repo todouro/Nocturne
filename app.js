@@ -30,6 +30,19 @@
 
   const STORAGE_KEY = "nocturne.preferences.v1";
   const NOTE_NAMES = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
+  // Salamander Grand Piano by Alexander Holm (CC BY 3.0), hosted by Tone.js.
+  const PIANO_SAMPLE_BASE = "https://tonejs.github.io/audio/salamander/";
+  const PIANO_SAMPLES = [
+    [21, "A0.mp3"], [24, "C1.mp3"], [27, "Ds1.mp3"], [30, "Fs1.mp3"],
+    [33, "A1.mp3"], [36, "C2.mp3"], [39, "Ds2.mp3"], [42, "Fs2.mp3"],
+    [45, "A2.mp3"], [48, "C3.mp3"], [51, "Ds3.mp3"], [54, "Fs3.mp3"],
+    [57, "A3.mp3"], [60, "C4.mp3"], [63, "Ds4.mp3"], [66, "Fs4.mp3"],
+    [69, "A4.mp3"], [72, "C5.mp3"], [75, "Ds5.mp3"], [78, "Fs5.mp3"],
+    [81, "A5.mp3"], [84, "C6.mp3"], [87, "Ds6.mp3"], [90, "Fs6.mp3"],
+    [93, "A6.mp3"], [96, "C7.mp3"], [99, "Ds7.mp3"], [102, "Fs7.mp3"],
+    [105, "A7.mp3"], [108, "C8.mp3"]
+  ];
+  const PRIORITY_SAMPLE_MIDIS = [45, 48, 51, 54, 57, 60, 63, 66, 69, 72];
   const WHITE_INDICES = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23];
   const BLACK_INDICES = [1, 3, 6, 8, 10, 13, 15, 18, 20, 22];
   const KEY_BINDINGS = [
@@ -59,10 +72,14 @@
   let audioContext = null;
   let masterGain = null;
   let compressor = null;
-  let delayNode = null;
-  let feedbackGain = null;
+  let reverbNode = null;
   let wetGain = null;
   let noiseBuffer = null;
+  const pianoSamples = new Map();
+  let sampleLoadPromise = null;
+  let sampleLoading = false;
+  let sampleReady = false;
+  let sampleLoadFailed = false;
   let audioReady = false;
   let lastNote = null;
   let canvasWidth = 0;
@@ -134,6 +151,48 @@
   function formatFrequency(hz) {
     if (hz >= 1000) return (hz / 1000).toFixed(2) + " kHz";
     return hz.toFixed(hz >= 100 ? 1 : 2) + " Hz";
+  }
+
+  function loadPianoSamples() {
+    if (sampleLoadPromise || !audioContext) return sampleLoadPromise;
+    sampleLoading = true;
+    sampleLoadFailed = false;
+    updateAudioInterface();
+    const context = audioContext;
+
+    async function loadOneSample(definition) {
+      if (pianoSamples.has(definition[0])) return;
+      const response = await fetch(PIANO_SAMPLE_BASE + definition[1], { mode: "cors", cache: "force-cache" });
+      if (!response.ok) throw new Error("Piano sample failed: " + definition[1]);
+      const encoded = await response.arrayBuffer();
+      const decoded = await context.decodeAudioData(encoded);
+      if (audioContext === context) pianoSamples.set(definition[0], decoded);
+    }
+
+    sampleLoadPromise = (async () => {
+      const priority = PIANO_SAMPLES.filter((sample) => PRIORITY_SAMPLE_MIDIS.includes(sample[0]));
+      await Promise.allSettled(priority.map(loadOneSample));
+      sampleReady = pianoSamples.size > 0;
+      updateAudioInterface();
+
+      // Load the rest of the keyboard in small batches without blocking playing.
+      const remaining = PIANO_SAMPLES.filter((sample) => !PRIORITY_SAMPLE_MIDIS.includes(sample[0]));
+      for (let offset = 0; offset < remaining.length; offset += 5) {
+        await Promise.allSettled(remaining.slice(offset, offset + 5).map(loadOneSample));
+        sampleReady = pianoSamples.size > 0;
+        updateAudioInterface();
+      }
+      sampleLoading = false;
+      sampleReady = pianoSamples.size > 0;
+      sampleLoadFailed = !sampleReady;
+      updateAudioInterface();
+    })().catch(() => {
+      sampleLoading = false;
+      sampleReady = pianoSamples.size > 0;
+      sampleLoadFailed = !sampleReady;
+      updateAudioInterface();
+    });
+    return sampleLoadPromise;
   }
 
   function createKey(index, isBlack) {
@@ -267,7 +326,11 @@
     } else {
       audioButtonText.textContent = "SOUND ON";
       audioButton.setAttribute("aria-label", "Mute piano audio");
-      footerStatus.textContent = "THE ROOM IS LISTENING";
+      if (sampleLoading && !sampleReady) footerStatus.textContent = "LOADING GRAND PIANO SAMPLES";
+      else if (sampleLoadFailed) footerStatus.textContent = "SYNTH FALLBACK · SAMPLES UNAVAILABLE";
+      else if (sampleLoading) footerStatus.textContent = "GRAND PIANO READY · LOADING RANGE";
+      else if (sampleReady) footerStatus.textContent = "SALAMANDER GRAND PIANO READY";
+      else footerStatus.textContent = "THE ROOM IS LISTENING";
     }
     instrumentLiveDot.classList.toggle("is-ready", audioReady && !muted);
   }
@@ -285,6 +348,7 @@
           noteReadout.textContent = "TAP TO ENABLE SOUND";
         });
       }
+      if (!sampleLoadPromise) loadPianoSamples();
       return audioContext;
     }
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -300,25 +364,30 @@
       audioContext = new AudioContextClass();
       masterGain = audioContext.createGain();
       compressor = audioContext.createDynamicsCompressor();
-      delayNode = audioContext.createDelay(1.0);
-      feedbackGain = audioContext.createGain();
+      reverbNode = audioContext.createConvolver();
       wetGain = audioContext.createGain();
 
       masterGain.gain.value = (muted ? 0 : volume / 100) * 0.78;
-      compressor.threshold.value = -19;
-      compressor.knee.value = 17;
-      compressor.ratio.value = 3;
-      compressor.attack.value = 0.004;
-      compressor.release.value = 0.24;
-      delayNode.delayTime.value = 0.235;
-      feedbackGain.gain.value = 0.13;
-      wetGain.gain.value = roomAmount / 100 * 0.42;
+      compressor.threshold.value = -14;
+      compressor.knee.value = 20;
+      compressor.ratio.value = 2.2;
+      compressor.attack.value = 0.008;
+      compressor.release.value = 0.25;
+      wetGain.gain.value = roomAmount / 100 * 0.34;
 
+      // A diffuse impulse creates a gentle room tail without a distracting echo.
+      const impulseLength = Math.floor(audioContext.sampleRate * 2.15);
+      const impulse = audioContext.createBuffer(2, impulseLength, audioContext.sampleRate);
+      for (let channel = 0; channel < 2; channel += 1) {
+        const impulseData = impulse.getChannelData(channel);
+        for (let i = 0; i < impulseLength; i += 1) {
+          impulseData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / impulseLength, 3.2);
+        }
+      }
+      reverbNode.buffer = impulse;
       masterGain.connect(compressor);
-      delayNode.connect(feedbackGain);
-      feedbackGain.connect(delayNode);
-      delayNode.connect(wetGain);
-      wetGain.connect(compressor);
+      reverbNode.connect(wetGain);
+      wetGain.connect(masterGain);
       compressor.connect(audioContext.destination);
 
       const bufferLength = Math.max(1, Math.floor(audioContext.sampleRate * 0.075));
@@ -335,6 +404,7 @@
       audioContext.addEventListener("statechange", () => {
         if (audioContext && audioContext.state === "running") setAudioStatusReady();
       });
+      loadPianoSamples();
       return audioContext;
     } catch (_) {
       noteReadout.textContent = "COULD NOT START AUDIO";
@@ -343,9 +413,42 @@
     }
   }
 
+  function createSampleVoice(midi, context) {
+    if (!pianoSamples.size || !reverbNode || !masterGain) return null;
+    let sampleMidi = null;
+    let distance = Infinity;
+    pianoSamples.forEach((buffer, candidateMidi) => {
+      const candidateDistance = Math.abs(candidateMidi - midi);
+      if (candidateDistance < distance) {
+        distance = candidateDistance;
+        sampleMidi = candidateMidi;
+      }
+    });
+    if (sampleMidi === null) return null;
+
+    const now = context.currentTime;
+    const source = context.createBufferSource();
+    const mix = context.createGain();
+    source.buffer = pianoSamples.get(sampleMidi);
+    source.playbackRate.setValueAtTime(frequencyForMidi(midi) / frequencyForMidi(sampleMidi), now);
+    mix.gain.setValueAtTime(0.0001, now);
+    mix.gain.exponentialRampToValueAtTime(0.92, now + 0.016);
+    source.connect(mix);
+    mix.connect(masterGain);
+    mix.connect(reverbNode);
+
+    const voice = { midi: midi, mix: mix, oscillators: [], down: true, released: false, sampled: true, source: source };
+    voices.add(voice);
+    source.onended = () => cleanupVoice(voice);
+    source.start(now);
+    return voice;
+  }
+
   function createVoice(midi) {
     const context = ensureAudio();
     if (!context || !masterGain) return null;
+    const sampledVoice = createSampleVoice(midi, context);
+    if (sampledVoice) return sampledVoice;
 
     const now = context.currentTime;
     const fundamental = frequencyForMidi(midi);
@@ -353,7 +456,7 @@
     mix.gain.setValueAtTime(0.0001, now);
     mix.gain.exponentialRampToValueAtTime(1, now + 0.014);
     mix.connect(masterGain);
-    mix.connect(delayNode);
+    mix.connect(reverbNode);
 
     // A small group of tuned partials makes a warmer, bell-like string tone than a raw oscillator.
     const partials = [
@@ -423,6 +526,9 @@
     if (!voices.has(voice)) return;
     voices.delete(voice);
     try { voice.mix.disconnect(); } catch (_) {}
+    if (voice.source) {
+      try { voice.source.disconnect(); } catch (_) {}
+    }
   }
 
   function releaseVoice(voice, quickly) {
@@ -431,7 +537,7 @@
     const context = audioContext;
     if (!context) return;
     const now = context.currentTime;
-    const duration = quickly ? 0.035 : 0.12;
+    const duration = voice.sampled ? (quickly ? 0.035 : 0.22) : (quickly ? 0.035 : 0.12);
     try {
       voice.mix.gain.cancelScheduledValues(now);
       if (typeof voice.mix.gain.cancelAndHoldAtTime === "function") voice.mix.gain.cancelAndHoldAtTime(now);
@@ -440,6 +546,10 @@
       try {
         voice.mix.gain.setValueAtTime(0.0001, now);
       } catch (_) {}
+    }
+    if (voice.sampled) {
+      try { voice.source.stop(now + (quickly ? 0.12 : 1.05)); } catch (_) {}
+      return;
     }
     voice.remaining = voice.oscillators.length;
     voice.oscillators.forEach((partial) => {
@@ -540,7 +650,7 @@
     roomSlider.value = String(roomAmount);
     roomValue.textContent = String(roomAmount) + "%";
     if (wetGain && audioContext) {
-      wetGain.gain.setTargetAtTime(roomAmount / 100 * 0.42, audioContext.currentTime, 0.04);
+      wetGain.gain.setTargetAtTime(roomAmount / 100 * 0.34, audioContext.currentTime, 0.04);
     }
     savePreferences();
   }

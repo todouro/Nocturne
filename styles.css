@@ -751,3 +751,21 @@ input[type="range"]::-moz-range-thumb {
   }
   .atmosphere__glow { animation: none; }
 }
+
+
+/* Quiet, visible attribution for the CC BY 3.0 piano sample library. */
+.sample-credit {
+  margin: 0 auto 22px;
+  color: #777381;
+  font-size: 7px;
+  line-height: 1.8;
+  letter-spacing: .09em;
+  text-align: center;
+}
+.sample-credit a {
+  color: #aaa4bd;
+  text-decoration: underline;
+  text-decoration-color: rgba(170, 164, 189, .35);
+  text-underline-offset: 3px;
+}
+.sample-credit a:hover { color: #d2cce7; }
