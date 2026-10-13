@@ -194,7 +194,9 @@
     BLACK_INDICES.forEach((index) => {
       const key = createKey(index, true);
       const whiteKeysBefore = WHITE_INDICES.filter((whiteIndex) => whiteIndex < index).length;
-      key.style.left = ((whiteKeysBefore / WHITE_INDICES.length) * 100) + "%";
+      // Account for the 2px gaps between white keys so black keys stay centered on the actual boundaries.
+      const gapOffset = (whiteKeysBefore * 2) - 1 - ((26 * whiteKeysBefore) / WHITE_INDICES.length);
+      key.style.left = "calc(" + ((whiteKeysBefore / WHITE_INDICES.length) * 100) + "% + " + gapOffset.toFixed(2) + "px)";
       key.style.transform = "translateX(-50%)";
       blackKeysRoot.appendChild(key);
     });
