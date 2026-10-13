@@ -70,7 +70,6 @@
   let pixelRatio = 1;
   let animationFrame = 0;
   let lastFrameTime = 0;
-  let firstFrame = true;
 
   const heldInputs = new Map();
   const activeMidiCounts = new Map();
@@ -731,17 +730,16 @@
 
   function setUpControls() {
     audioButton.addEventListener("click", () => {
-      if (!audioContext) {
+      if (!audioContext || audioContext.state === "suspended") {
+        muted = false;
         const context = ensureAudio();
-        if (context) {
-          muted = false;
-          if (masterGain) masterGain.gain.setTargetAtTime((muted ? 0 : volume / 100) * 0.78, context.currentTime, 0.025);
-          if (context.state === "running") setAudioStatusReady();
+        if (context && masterGain && context.state === "running") {
+          masterGain.gain.setTargetAtTime((volume / 100) * 0.78, context.currentTime, 0.025);
+          setAudioStatusReady();
         }
-      } else {
-        if (audioContext.state === "suspended") ensureAudio();
-        setMuted(!muted);
+        return;
       }
+      setMuted(!muted);
     });
 
     octaveDown.addEventListener("click", () => setOctave(octave - 1));
@@ -789,7 +787,6 @@
     document.addEventListener("contextmenu", (event) => {
       if (event.target.closest(".piano-key")) event.preventDefault();
     });
-    firstFrame = false;
   }
 
   init();
