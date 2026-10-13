@@ -449,9 +449,8 @@
   function startNote(midi, source) {
     if (heldInputs.has(source)) return;
     ensureAudio();
-    muted = false;
     if (masterGain && audioContext) {
-      masterGain.gain.setTargetAtTime((volume / 100) * 0.78, audioContext.currentTime, 0.025);
+      masterGain.gain.setTargetAtTime((muted ? 0 : volume / 100) * 0.78, audioContext.currentTime, 0.025);
     }
 
     const voice = createVoice(midi);
@@ -736,8 +735,8 @@
         const context = ensureAudio();
         if (context) {
           muted = false;
-          if (masterGain) masterGain.gain.setTargetAtTime((volume / 100) * 0.78, context.currentTime, 0.025);
-          setAudioStatusReady();
+          if (masterGain) masterGain.gain.setTargetAtTime((muted ? 0 : volume / 100) * 0.78, context.currentTime, 0.025);
+          if (context.state === "running") setAudioStatusReady();
         }
       } else {
         if (audioContext.state === "suspended") ensureAudio();
