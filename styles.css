@@ -456,7 +456,7 @@ button:disabled { opacity: .35; cursor: not-allowed; }
 .piano-key--black .piano-key__shortcut { color: #aaa4bc; font-size: 8px; }
 .piano-key--black .piano-key__note { top: auto; bottom: 27px; color: #c4badd; font-size: 7px; }
 .piano-key--black.is-active {
-  transform: translateY(3px);
+  transform: translate(-50%, 3px);
   background: linear-gradient(90deg, #292438, #51476b 45%, #211c30);
   box-shadow: inset 0 -2px 0 rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.45);
 }
