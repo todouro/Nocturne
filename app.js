@@ -222,7 +222,7 @@
       if (event.button !== 0 && event.pointerType === "mouse") return;
       event.preventDefault();
       try { key.setPointerCapture(event.pointerId); } catch (_) {}
-      startNote(midiForIndex(index), "pointer:" + event.pointerId);
+      startNote(midiForIndex(index), "pointer:" + event.pointerId, index);
     });
     key.addEventListener("pointerup", (event) => finishInput("pointer:" + event.pointerId));
     key.addEventListener("pointercancel", (event) => finishInput("pointer:" + event.pointerId, true));
@@ -230,7 +230,7 @@
     key.addEventListener("keydown", (event) => {
       if ((event.code === "Space" || event.code === "Enter") && !event.repeat) {
         event.preventDefault();
-        startNote(midiForIndex(index), "access:" + index);
+        startNote(midiForIndex(index), "access:" + index, index);
       }
     });
     key.addEventListener("keyup", (event) => {
@@ -273,12 +273,22 @@
       if (label) label.textContent = (key.dataset.black === "true" || index === 0 || index === 12) ? name : "";
       key.setAttribute("aria-label", "Piano note " + name + ", computer key " + binding.label);
       key.title = name + " · " + binding.label;
-      key.classList.toggle("is-active", (activeMidiCounts.get(midi) || 0) > 0);
     }
+    updateKeyboardActiveState();
     const first = noteName(baseMidi());
     const last = noteName(baseMidi() + 23);
     rangeLabel.textContent = first + " — " + last;
     keyboardRoot.setAttribute("aria-label", "Playable piano keys, " + first + " through " + last);
+  }
+
+  function updateKeyboardActiveState() {
+    const heldIndices = new Set();
+    heldInputs.forEach((held) => {
+      if (Number.isInteger(held.keyIndex)) heldIndices.add(held.keyIndex);
+    });
+    keyElements.forEach((key, index) => {
+      key.classList.toggle("is-active", heldIndices.has(index));
+    });
   }
 
   function updateKeyState(midi, isDown) {
@@ -287,10 +297,7 @@
     else if (count <= 1) activeMidiCounts.delete(midi);
     else activeMidiCounts.set(midi, count - 1);
 
-    const index = midi - baseMidi();
-    const key = keyElements.get(index);
-    if (key) key.classList.toggle("is-active", (activeMidiCounts.get(midi) || 0) > 0);
-
+    updateKeyboardActiveState();
     if (isDown) activeVisualNotes.set(midi, performance.now());
     else if (!(activeMidiCounts.get(midi) > 0)) activeVisualNotes.delete(midi);
     updateLiveReadout();
@@ -557,7 +564,7 @@
     });
   }
 
-  function startNote(midi, source) {
+  function startNote(midi, source, keyIndex) {
     if (heldInputs.has(source)) return;
     ensureAudio();
     if (masterGain && audioContext) {
@@ -565,7 +572,7 @@
     }
 
     const voice = createVoice(midi);
-    heldInputs.set(source, { midi: midi, voice: voice });
+    heldInputs.set(source, { midi: midi, voice: voice, keyIndex: keyIndex });
     updateKeyState(midi, true);
     lastNote = midi;
     noteReadout.textContent = noteName(midi) + " · " + formatFrequency(frequencyForMidi(midi));
@@ -602,7 +609,8 @@
   function setOctave(nextOctave) {
     const next = clamp(nextOctave, 1, 6);
     if (next === octave) return;
-    releaseAll(true);
+    // Existing voices keep ringing at their original pitches. The new octave
+    // only changes the notes triggered from this point forward.
     octave = next;
     octaveValue.textContent = String(octave).padStart(2, "0");
     octaveDown.disabled = octave <= 1;
@@ -678,7 +686,7 @@
       const binding = bindingByCode.get(event.code);
       if (!binding || event.repeat) return;
       event.preventDefault();
-      startNote(midiForIndex(binding.index), "keyboard:" + event.code);
+      startNote(midiForIndex(binding.index), "keyboard:" + event.code, binding.index);
     });
 
     window.addEventListener("keyup", (event) => {
