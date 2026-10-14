@@ -138,10 +138,13 @@
     return baseMidi() + index;
   }
 
+  function notePitchClass(midi) {
+    return NOTE_NAMES[((midi % 12) + 12) % 12];
+  }
+
   function noteName(midi) {
-    const pitchClass = NOTE_NAMES[((midi % 12) + 12) % 12];
     const noteOctave = Math.floor(midi / 12) - 1;
-    return pitchClass + noteOctave;
+    return notePitchClass(midi) + noteOctave;
   }
 
   function frequencyForMidi(midi) {
@@ -214,8 +217,8 @@
     shortcut.textContent = binding.label;
     shortcut.setAttribute("aria-hidden", "true");
 
-    // Keep note names discreet on the white keys; black keys show their pitch as well.
-    if (isBlack || index === 0 || index === 12) note.textContent = noteName(midiForIndex(index));
+    // Show the musical pitch on every key; computer shortcuts remain separate below.
+    note.textContent = notePitchClass(midiForIndex(index));
     key.append(note, shortcut);
 
     key.addEventListener("pointerdown", (event) => {
@@ -270,7 +273,7 @@
       const name = noteName(midi);
       const binding = bindingByIndex.get(index);
       const label = key.querySelector(".piano-key__note");
-      if (label) label.textContent = (key.dataset.black === "true" || index === 0 || index === 12) ? name : "";
+      if (label) label.textContent = notePitchClass(midi);
       key.setAttribute("aria-label", "Piano note " + name + ", computer key " + binding.label);
       key.title = name + " · " + binding.label;
     }
