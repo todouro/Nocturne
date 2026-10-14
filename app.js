@@ -308,7 +308,7 @@
 
   function updateLiveReadout() {
     const count = activeVisualNotes.size;
-    instrumentLiveDot.classList.toggle("is-ready", audioReady);
+    if (instrumentLiveDot) instrumentLiveDot.classList.toggle("is-ready", audioReady);
     if (count > 0) {
       noteReadout.textContent = count > 1 ? count + " NOTES IN THE AIR" : noteName(Array.from(activeVisualNotes.keys())[0]) + " · " + formatFrequency(frequencyForMidi(Array.from(activeVisualNotes.keys())[0]));
       sceneFrequency.textContent = count > 1 ? "A SMALL CHORD" : formatFrequency(frequencyForMidi(Array.from(activeVisualNotes.keys())[0])).toUpperCase();
@@ -322,27 +322,32 @@
   }
 
   function updateAudioInterface() {
-    audioButton.classList.toggle("is-ready", audioReady && !muted);
-    audioButton.classList.toggle("is-muted", muted);
-    audioButton.setAttribute("aria-pressed", audioReady && !muted ? "true" : "false");
-    if (!audioReady) {
-      audioButtonText.textContent = "WAKE THE PIANO";
-      audioButton.setAttribute("aria-label", "Enable piano audio");
-      footerStatus.textContent = "A QUIET PLACE TO BEGIN";
-    } else if (muted) {
-      audioButtonText.textContent = "SOUND MUTED";
-      audioButton.setAttribute("aria-label", "Unmute piano audio");
-      footerStatus.textContent = "SOUND IS RESTING";
-    } else {
-      audioButtonText.textContent = "SOUND ON";
-      audioButton.setAttribute("aria-label", "Mute piano audio");
-      if (sampleLoading && !sampleReady) footerStatus.textContent = "LOADING GRAND PIANO SAMPLES";
+    if (audioButton && audioButtonText) {
+      audioButton.classList.toggle("is-ready", audioReady && !muted);
+      audioButton.classList.toggle("is-muted", muted);
+      audioButton.setAttribute("aria-pressed", audioReady && !muted ? "true" : "false");
+      if (!audioReady) {
+        audioButtonText.textContent = "WAKE THE PIANO";
+        audioButton.setAttribute("aria-label", "Enable piano audio");
+      } else if (muted) {
+        audioButtonText.textContent = "SOUND MUTED";
+        audioButton.setAttribute("aria-label", "Unmute piano audio");
+      } else {
+        audioButtonText.textContent = "SOUND ON";
+        audioButton.setAttribute("aria-label", "Mute piano audio");
+      }
+    }
+
+    if (footerStatus) {
+      if (!audioReady) footerStatus.textContent = "A QUIET PLACE TO BEGIN";
+      else if (muted) footerStatus.textContent = "SOUND IS RESTING";
+      else if (sampleLoading && !sampleReady) footerStatus.textContent = "LOADING GRAND PIANO SAMPLES";
       else if (sampleLoadFailed) footerStatus.textContent = "SYNTH FALLBACK · SAMPLES UNAVAILABLE";
       else if (sampleLoading) footerStatus.textContent = "GRAND PIANO READY · LOADING RANGE";
       else if (sampleReady) footerStatus.textContent = "SALAMANDER GRAND PIANO READY";
       else footerStatus.textContent = "THE ROOM IS LISTENING";
     }
-    instrumentLiveDot.classList.toggle("is-ready", audioReady && !muted);
+    if (instrumentLiveDot) instrumentLiveDot.classList.toggle("is-ready", audioReady && !muted);
   }
 
   function setAudioStatusReady() {
@@ -364,9 +369,9 @@
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) {
       noteReadout.textContent = "AUDIO IS NOT SUPPORTED HERE";
-      footerStatus.textContent = "TRY A RECENT BROWSER";
-      audioButtonText.textContent = "AUDIO UNAVAILABLE";
-      audioButton.disabled = true;
+      if (footerStatus) footerStatus.textContent = "TRY A RECENT BROWSER";
+      if (audioButtonText) audioButtonText.textContent = "AUDIO UNAVAILABLE";
+      if (audioButton) audioButton.disabled = true;
       return null;
     }
 
@@ -418,7 +423,7 @@
       return audioContext;
     } catch (_) {
       noteReadout.textContent = "COULD NOT START AUDIO";
-      footerStatus.textContent = "CHECK YOUR BROWSER AUDIO SETTINGS";
+      if (footerStatus) footerStatus.textContent = "CHECK YOUR BROWSER AUDIO SETTINGS";
       return null;
     }
   }
@@ -852,19 +857,6 @@
   }
 
   function setUpControls() {
-    audioButton.addEventListener("click", () => {
-      if (!audioContext || audioContext.state === "suspended") {
-        muted = false;
-        const context = ensureAudio();
-        if (context && masterGain && context.state === "running") {
-          masterGain.gain.setTargetAtTime((volume / 100) * 0.78, context.currentTime, 0.025);
-          setAudioStatusReady();
-        }
-        return;
-      }
-      setMuted(!muted);
-    });
-
     octaveDown.addEventListener("click", () => setOctave(octave - 1));
     octaveUp.addEventListener("click", () => setOctave(octave + 1));
     volumeSlider.addEventListener("input", (event) => setVolume(event.target.value));
