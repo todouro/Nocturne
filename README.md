@@ -36,4 +36,3 @@ Resonance uses the played pitches and currently held notes to place expanding wa
 
 A current Chromium, Firefox, or Safari browser with Web Audio support is recommended. Audio is initialized only after a user action. Piano sample loading requires an internet connection to the Tone.js sample host; decoded samples are reused during the session and may be cached by the browser. No tracking or API keys are used.
 
-## Piano sample attribution\n\nThe Salamander Grand Piano recordings were created by Alexander Holm and are licensed under **Creative Commons Attribution 3.0 (CC BY 3.0)**. The sample set is hosted at [Tone.js Salamander](https://tonejs.github.io/audio/salamander/) and its [original archive](https://archive.org/details/SalamanderGrandPianoV3).\n\nThe project began as an empty repository, so there was no pre-existing build, lint, test, or CI configuration to preserve.
