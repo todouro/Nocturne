@@ -27,12 +27,42 @@
         <span>NOCTURNE</span>
       </a>
 
+      <div class="masthead__center">
+        <span class="eyebrow">AN INSTRUMENT FOR QUIET HOURS</span>
+        <span class="masthead__index">Nº 001 <span class="index-divider">/</span> PIANO STUDY</span>
+      </div>
+
+      <button class="audio-button" id="audio-button" type="button" aria-pressed="false" aria-label="Enable piano audio">
+        <span class="audio-button__dot" aria-hidden="true"></span>
+        <span class="audio-button__text">WAKE THE PIANO</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M3 8v4h3l4 3V5L6 8H3Z" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round"/>
+          <path d="M13 7a4 4 0 0 1 0 6M15 4.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+        </svg>
+      </button>
     </header>
 
     <main>
-      <section class="resonance" aria-label="Sound visualization">
-          <div class="resonance__scene" id="resonance-scene">
+      <section class="resonance" aria-labelledby="resonance-title">
+        <div class="section-heading">
+          <div class="section-heading__left">
+            <span class="section-number">01</span>
+            <span class="section-heading__rule" aria-hidden="true"></span>
+            <h2 id="resonance-title">RESONANCE</h2>
+            <span class="section-heading__subtitle">THE SHAPE OF A SOUND</span>
+          </div>
+          <div class="note-readout" aria-live="polite" aria-atomic="true">
+            <span class="note-readout__indicator" aria-hidden="true"></span>
+            <span id="note-readout">WAITING FOR A NOTE</span>
+          </div>
+        </div>
+
+        <div class="resonance__scene" id="resonance-scene">
           <canvas id="resonance-canvas" aria-hidden="true"></canvas>
+          <div class="scene-caption scene-caption--left" aria-hidden="true">
+            <span class="scene-caption__cross">+</span>
+            <span>EVERY NOTE LEAVES A TRACE</span>
+          </div>
           <div class="scene-caption scene-caption--right" aria-hidden="true">
             <span class="scene-caption__line"></span>
             <span id="scene-frequency">LISTEN IN</span>
@@ -44,8 +74,15 @@
         </div>
       </section>
 
-      <section class="instrument" aria-label="Piano instrument">
+      <section class="instrument" aria-labelledby="instrument-title">
         <div class="instrument__topline">
+          <div class="instrument__name">
+            <span class="instrument__live-dot" aria-hidden="true"></span>
+            <div>
+              <h2 id="instrument-title">The piano</h2>
+              <p>SOFT HAMMERS · SMALL ROOM</p>
+            </div>
+          </div>
           <div class="instrument__topmeta">
             <span id="range-label">C3 — B4</span>
             <span class="topmeta-separator" aria-hidden="true"></span>
@@ -133,6 +170,7 @@
         </div>
 
         <div class="play-hint">
+          <span class="play-hint__label">YOUR KEYBOARD, REIMAGINED</span>
           <div class="mapping" aria-label="Computer keyboard mappings">
             <span class="mapping__group"><kbd>Z</kbd><kbd>S</kbd><kbd>X</kbd><kbd>D</kbd><kbd>C</kbd><kbd>V</kbd><kbd>G</kbd><kbd>B</kbd><kbd>H</kbd><kbd>N</kbd><kbd>J</kbd><kbd>M</kbd></span>
             <span class="mapping__divider" aria-hidden="true"></span>
@@ -143,10 +181,16 @@
       </section>
     </main>
 
-  </div>
-  <div class="visually-hidden">
-    <span id="note-readout" role="status" aria-live="polite" aria-atomic="true"></span>
-    <span id="footer-status" role="status" aria-live="polite"></span>
+    <footer class="footer">
+      <a class="footer__wordmark" href="./">N<span>.</span></a>
+      <span class="footer__thought">MADE FOR THE NOTES YOU DIDN'T PLAN.</span>
+      <div class="footer__right">
+        <span class="footer__status-dot" aria-hidden="true"></span>
+        <span id="footer-status">A QUIET PLACE TO BEGIN</span>
+        <span class="footer__divider" aria-hidden="true"></span>
+        <span>NOCTURNE <span class="footer__year">© 2026</span></span>
+      </div>
+    </footer>
   </div>
 </body>
 </html>
