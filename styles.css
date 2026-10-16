@@ -988,3 +988,27 @@ input[type="range"]::-moz-range-thumb {
 @media (prefers-reduced-motion: reduce) {
   .atmosphere__glow { animation: none; }
 }
+
+
+/* Functional audio control lives with the instrument now that the site chrome is gone. */
+.instrument__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+  min-width: 0;
+}
+.instrument__actions .instrument__topmeta { white-space: nowrap; }
+.instrument__actions .audio-button {
+  flex: 0 0 auto;
+  justify-self: auto;
+}
+.instrument__actions .audio-button__text { white-space: nowrap; }
+
+@media (max-width: 650px) {
+  .instrument__actions { gap: 8px; }
+  .instrument__actions .instrument__topmeta { display: none; }
+  .instrument__actions .audio-button { min-height: 32px; gap: 6px; padding-inline: 9px; }
+  .instrument__actions .audio-button__text { font-size: 7px; letter-spacing: .06em; }
+  .instrument__actions .audio-button svg { width: 14px; height: 14px; }
+}
