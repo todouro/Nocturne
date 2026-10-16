@@ -685,3 +685,306 @@ input[type="range"]::-moz-range-thumb {
   text-underline-offset: 3px;
 }
 .sample-credit a:hover { color: #d2cce7; }
+
+
+/* FROSTED GLASS REDESIGN — graphite, smoke, and soft light; no purple gradients. */
+:root {
+  color-scheme: dark;
+  --ink: #090b0e;
+  --ink-soft: #0e1115;
+  --ink-raised: #14181e;
+  --chalk: #eeeff0;
+  --chalk-muted: #a5abb4;
+  --chalk-dim: #737b86;
+  --silver: #c9d0d8;
+  --lavender: #aeb9c5;
+  --lavender-bright: #e5eaf0;
+  --edge: rgba(236, 241, 247, .115);
+  --edge-soft: rgba(236, 241, 247, .065);
+  background: var(--ink);
+  color: var(--chalk);
+}
+
+html { scrollbar-color: #343a42 #0b0d10; }
+
+body {
+  background: #090b0e;
+  color: var(--chalk);
+}
+
+/* Keep the background nearly black. The glass is the visual feature. */
+.atmosphere__glow {
+  width: min(55vw, 680px);
+  filter: blur(115px);
+  opacity: .065;
+}
+.atmosphere__glow--one {
+  top: -35rem;
+  left: 18%;
+  background: #c0c8d2;
+  animation-duration: 32s;
+}
+.atmosphere__glow--two {
+  top: 28rem;
+  right: -42rem;
+  background: #82909f;
+  opacity: .045;
+  animation-duration: 40s;
+}
+.grain { opacity: .022; }
+
+.app-shell { width: min(100% - 80px, 1240px); }
+
+.masthead {
+  position: sticky;
+  z-index: 20;
+  top: 12px;
+  min-height: 76px;
+  margin-top: 12px;
+  padding: 0 20px;
+  border: 1px solid rgba(236, 241, 247, .12);
+  border-radius: 16px;
+  background: rgba(21, 24, 29, .67);
+  -webkit-backdrop-filter: blur(28px) saturate(135%);
+  backdrop-filter: blur(28px) saturate(135%);
+  box-shadow: 0 12px 32px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.055);
+}
+.wordmark { letter-spacing: .18em; }
+.wordmark__mark { color: #e0e4e9; filter: none; }
+.eyebrow { color: #b7bec7; }
+.masthead__index { color: #818994; }
+.index-divider { color: #535a63; }
+
+.audio-button {
+  min-height: 37px;
+  gap: 9px;
+  padding: 0 13px;
+  border: 1px solid rgba(236, 241, 247, .14);
+  border-radius: 999px;
+  background: rgba(255,255,255,.045);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  transition: background .22s ease, border-color .22s ease, transform .22s ease;
+}
+.audio-button:hover {
+  background: rgba(255,255,255,.085);
+  border-color: rgba(236,241,247,.24);
+  transform: translateY(-1px);
+}
+.audio-button__text, .audio-button svg { color: #d0d5dc; }
+.audio-button__dot, .instrument__live-dot, .note-readout__indicator, .footer__status-dot {
+  background: #777f89;
+}
+.audio-button.is-ready .audio-button__dot,
+.instrument__live-dot.is-ready,
+.note-readout__indicator.is-live,
+.footer__status-dot.is-live {
+  background: #d5dde5;
+  box-shadow: 0 0 9px rgba(205, 218, 230, .24);
+}
+.audio-button.is-muted .audio-button__dot { background: #85858a; }
+
+/* Section framing is glass rather than a colored banner. */
+.section-heading {
+  min-height: 41px;
+  margin-top: 25px;
+  padding-inline: 14px;
+  border: 1px solid var(--edge);
+  border-bottom-color: rgba(236,241,247,.065);
+  border-radius: 12px 12px 0 0;
+  background: rgba(226, 233, 241, .035);
+  -webkit-backdrop-filter: blur(24px) saturate(130%);
+  backdrop-filter: blur(24px) saturate(130%);
+}
+.section-number { color: #c4ccd5; }
+.section-heading__rule { background: rgba(211, 220, 229, .28); }
+.section-heading h2 { color: #e0e4e9; }
+.section-heading__subtitle { color: #858d97; }
+.note-readout { color: #a1a8b1; }
+
+.resonance__scene {
+  height: 150px;
+  border: 1px solid var(--edge);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  background: rgba(224, 232, 240, .025);
+  -webkit-backdrop-filter: blur(34px) saturate(125%);
+  backdrop-filter: blur(34px) saturate(125%);
+}
+.resonance__scene::before {
+  background: rgba(210, 220, 231, .018);
+}
+.scene-caption { color: #858d97; }
+.scene-caption__cross { color: #d0d5db; }
+.scene-caption__line { background: #b0bac5; opacity: .62; }
+.scene-empty { color: #9ba3ad; }
+.scene-empty__star { color: #d4dbe2; }
+
+/* The piano sits inside a large, quiet frosted panel. */
+.instrument {
+  margin-top: 26px;
+  padding: 23px 22px 18px;
+  border: 1px solid rgba(236, 241, 247, .105);
+  border-radius: 16px;
+  background: rgba(218, 227, 237, .032);
+  -webkit-backdrop-filter: blur(30px) saturate(125%);
+  backdrop-filter: blur(30px) saturate(125%);
+  box-shadow: 0 24px 60px rgba(0,0,0,.17), inset 0 1px rgba(255,255,255,.045);
+}
+.instrument__topline { margin: 0 2px 17px; }
+.instrument__name h2 { color: #eff0f1; }
+.instrument__name p, .instrument__topmeta { color: #8f97a1; }
+.topmeta-separator { background: #757e89; }
+
+.keyboard-case {
+  padding-top: 17px;
+  border: 1px solid rgba(236, 241, 247, .16);
+  border-bottom-color: rgba(236, 241, 247, .09);
+  border-radius: 10px;
+  background: rgba(5, 7, 10, .56);
+  box-shadow: 0 18px 40px rgba(0,0,0,.26), inset 0 1px rgba(255,255,255,.065);
+}
+.keyboard-case__inset { opacity: .9; }
+.case-mark { color: #d2d8df; }
+.case-mark-small { color: #838b96; }
+.keyboard {
+  background: #080a0d;
+  box-shadow: 0 2px 0 rgba(255,255,255,.13), 0 5px 11px rgba(0,0,0,.35);
+}
+.piano-key--white {
+  background: linear-gradient(90deg, #c9cbd0 0%, #eeeff0 12%, #e3e5e7 84%, #c3c6cb 100%);
+  border-right-color: #bfc2c7;
+  border-left-color: #f4f4f5;
+}
+.piano-key--white.is-active {
+  background: linear-gradient(90deg, #abb6c2 0%, #dde3e8 18%, #d3dce4 82%, #a8b3bf 100%);
+}
+.piano-key__note { color: rgba(38, 43, 49, .62); }
+.piano-key__shortcut { color: #6c727a; }
+.piano-key--white.is-active .piano-key__shortcut { color: #414a54; }
+.piano-key--black {
+  background: linear-gradient(90deg, #050608 0%, #252a31 18%, #191e25 60%, #06080a 100%);
+}
+.piano-key--black:hover { background: linear-gradient(90deg, #20262d, #343b44 45%, #13171d); }
+.piano-key--black .piano-key__shortcut { color: #c5ccd4; }
+.piano-key--black .piano-key__note { color: #cdd4dc; }
+.piano-key--black.is-active {
+  background: linear-gradient(90deg, #333b44, #56616d 45%, #222a32);
+}
+
+.keyboard-case__foot {
+  min-height: 36px;
+  color: #929aa4;
+}
+.keyboard-case__signature { color: #c3cbd4; }
+.tiny-star { color: #c3cbd4; }
+
+.controls {
+  border-bottom-color: rgba(236, 241, 247, .09);
+}
+.control-label { color: #969ea8; }
+.stepper__button, .sustain-control, .settings-button {
+  border-color: rgba(236, 241, 247, .12);
+  border-radius: 7px;
+  background: rgba(240, 244, 248, .035);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+.stepper__button { color: #d0d6de; }
+.stepper__button:hover:not(:disabled) {
+  border-color: rgba(236,241,247,.25);
+  background: rgba(240,244,248,.09);
+}
+.stepper__value { color: #edf0f3; }
+.sustain-control:hover { border-color: rgba(236,241,247,.23); background: rgba(240,244,248,.06); }
+.sustain-control[aria-pressed="true"] {
+  border-color: rgba(222, 231, 239, .32);
+  background: rgba(220, 230, 240, .085);
+}
+.sustain-control__icon, .sustain-control__label { color: #d4dae1; }
+.sustain-control__state { color: #9aa3ad; }
+.sustain-control[aria-pressed="true"] .sustain-control__state { color: #edf0f3; }
+.control-hint { color: #858e98; }
+input[type="range"] { accent-color: #c0cbd5; }
+input[type="range"]::-webkit-slider-runnable-track { background: #444c56; }
+input[type="range"]::-moz-range-track { background: #444c56; }
+input[type="range"]::-webkit-slider-thumb {
+  border-color: #e1e7ec;
+  background: #aeb9c5;
+  box-shadow: 0 0 0 3px rgba(205,216,227,.07);
+}
+input[type="range"]::-moz-range-thumb {
+  border-color: #e1e7ec;
+  background: #aeb9c5;
+  box-shadow: 0 0 0 3px rgba(205,216,227,.07);
+}
+.range-control > svg { color: #c2cbd4; }
+.range-control output { color: #d0d6dd; }
+
+.settings-button { color: #c4cbd3; }
+.settings-button:hover, .settings-button[aria-expanded="true"] {
+  color: #f1f3f5;
+  border-color: rgba(236,241,247,.24);
+  background: rgba(240,244,248,.075);
+}
+.settings-panel {
+  border: 1px solid rgba(236, 241, 247, .105);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  background: rgba(224, 232, 240, .04);
+  -webkit-backdrop-filter: blur(30px) saturate(130%);
+  backdrop-filter: blur(30px) saturate(130%);
+}
+.settings-panel__eyebrow { color: #c2cbd4; }
+.settings-panel__intro p { color: #aeb5bd; }
+.room-setting__label { color: #e1e5e9; }
+.room-setting__label output { color: #c5ced7; }
+.room-setting > p { color: #929aa4; }
+.settings-close { color: #a3abb4; }
+.settings-close:hover { color: #f0f2f4; }
+
+.play-hint__label, .play-hint__right { color: #929aa4; }
+.mapping kbd, .play-hint__right kbd {
+  border: 1px solid rgba(236,241,247,.13);
+  border-radius: 5px;
+  background: rgba(228,235,242,.045);
+  box-shadow: inset 0 1px rgba(255,255,255,.045), 0 4px 12px rgba(0,0,0,.11);
+  color: #d2d7de;
+}
+.mapping__divider { background: rgba(236,241,247,.13); }
+
+.footer { border-top-color: rgba(236,241,247,.09); }
+.footer__wordmark { color: #d0d7de; }
+.footer__wordmark span { color: #929ba5; }
+.footer__thought, .footer__right { color: #8d96a0; }
+.footer__divider { background: #555e68; }
+.footer__year { color: #c5ccd3; }
+
+/* Small surface movement, not glowing gradients. */
+.audio-button, .stepper__button, .sustain-control, .settings-button {
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
+}
+.stepper__button:hover:not(:disabled), .sustain-control:hover, .settings-button:hover {
+  transform: translateY(-1px);
+}
+.piano-key--white:hover { filter: brightness(1.035); }
+
+@media (max-width: 980px) {
+  .app-shell { width: calc(100% - 48px); }
+  .masthead { padding-inline: 16px; }
+  .instrument { padding: 20px 16px 15px; }
+}
+@media (max-width: 650px) {
+  .app-shell { width: calc(100% - 28px); }
+  .masthead { top: 7px; min-height: 70px; margin-top: 7px; padding-inline: 12px; border-radius: 13px; }
+  .section-heading { margin-top: 19px; }
+  .resonance__scene { height: 116px; }
+  .instrument { margin-top: 22px; padding: 16px 10px 13px; border-radius: 13px; }
+  .instrument__topline { margin-inline: 2px; }
+  .keyboard-case { padding: 13px 8px 0; }
+  .settings-panel { border-radius: 0 0 10px 10px; }
+  .footer { margin-top: 31px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere__glow { animation: none; }
+}
