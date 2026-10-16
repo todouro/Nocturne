@@ -23,7 +23,7 @@
   const noteReadout = $("#note-readout");
   const sceneFrequency = $("#scene-frequency");
   const sceneEmpty = $("#scene-empty");
-  const footerStatus = $("#footer-status");
+  const footerStatus = $("#footer-status") || { textContent: "" };
   const instrumentLiveDot = $(".instrument__live-dot");
   const canvas = $("#resonance-canvas");
   const canvasContext = canvas.getContext("2d", { alpha: true });
