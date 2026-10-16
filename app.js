@@ -784,11 +784,11 @@
           if (px === 0) ctx.moveTo(px, yy);
           else ctx.lineTo(px, yy);
         }
-        ctx.strokeStyle = strand === 0 ? "rgba(180, 169, 220, .34)" : "rgba(118, 139, 174, .17)";
+        ctx.strokeStyle = strand === 0 ? "rgba(198, 208, 220, .28)" : "rgba(123, 139, 154, .14)";
         ctx.lineWidth = strand === 0 ? 1 : 0.65;
         ctx.stroke();
       }
-      ctx.fillStyle = "rgba(194, 182, 228, .55)";
+      ctx.fillStyle = "rgba(226, 231, 237, .48)";
       notes.forEach((midi) => {
         ctx.beginPath();
         ctx.arc(pitchPosition(midi), originY, 1.6, 0, Math.PI * 2);
