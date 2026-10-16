@@ -42,6 +42,34 @@
       </button>
     </header>
 
+    <section class="welcome" aria-labelledby="welcome-title">
+      <div class="welcome__copy">
+        <span class="welcome__kicker"><span aria-hidden="true"></span> A QUIET PLACE TO BEGIN</span>
+        <h1 id="welcome-title">A moment,<br><em>in music.</em></h1>
+        <p>A little room for the thoughts<br class="welcome__desktop-break"> that have nowhere else to go.</p>
+        <div class="welcome__actions">
+          <a class="welcome__button" href="#instrument">
+            <span>Enter the piano</span>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10h12M10 4.5l5.5 5.5-5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <span class="welcome__meta">NO RULES. NO AUDIENCE.<br>JUST YOU AND THE KEYS.</span>
+        </div>
+      </div>
+      <div class="welcome__art" aria-hidden="true">
+        <div class="welcome__art-grid"></div>
+        <div class="welcome__orbit welcome__orbit--outer"></div>
+        <div class="welcome__orbit welcome__orbit--inner"></div>
+        <div class="welcome__moon"></div>
+        <div class="welcome__moon-glint"></div>
+        <span class="welcome__star welcome__star--one">✳</span>
+        <span class="welcome__star welcome__star--two">✦</span>
+        <span class="welcome__star welcome__star--three">✧</span>
+        <span class="welcome__art-label welcome__art-label--top">NOCTURNE / STUDY Nº 001</span>
+        <span class="welcome__art-label welcome__art-label--bottom">A SMALL ROOM FOR SOUND</span>
+        <span class="welcome__art-index">N.</span>
+      </div>
+    </section>
+
     <main>
       <section class="resonance" aria-labelledby="resonance-title">
         <div class="section-heading">
@@ -74,7 +102,7 @@
         </div>
       </section>
 
-      <section class="instrument" aria-labelledby="instrument-title">
+      <section class="instrument" id="instrument" aria-labelledby="instrument-title">
         <div class="instrument__topline">
           <div class="instrument__name">
             <span class="instrument__live-dot" aria-hidden="true"></span>
